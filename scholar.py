@@ -1,6 +1,7 @@
 import json
 
 from scholarly import scholarly
+from tqdm import tqdm
 
 
 def get_author(name):
@@ -14,8 +15,14 @@ def get_publications(author):
     return list(map(scholarly.fill, author['publications']))
 
 
+# def get_citations(publication):
+#     return list(map(scholarly.fill, scholarly.citedby(publication)))
+
 def get_citations(publication):
-    return list(map(scholarly.fill, scholarly.citedby(publication)))
+    return list(map(scholarly.fill, tqdm(scholarly.citedby(publication),
+                                         'citations for {}'.format(publication['bib']['title']),
+                                         publication['num_citations']
+                                         )))
 
 
 def scrape_author_publications_citations(name):
