@@ -1,8 +1,10 @@
 import argparse
+import sys
 
-from scholar import scrape_author_publications_citations
+from scholar2scopus.scholar import scrape_author_publications_citations
 
-if __name__ == '__main__':
+
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--author', action="store", help='your name', required=True)
     parser.add_argument("--scopus_citations", action="store", default="scopus.csv",
@@ -14,3 +16,7 @@ if __name__ == '__main__':
     print('scraping', author)
 
     scrape_author_publications_citations(author)
+
+
+if __name__ == "__main__":
+    sys.exit(main())  # pragma: no cover
