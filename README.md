@@ -17,7 +17,7 @@ L'Abilitazione Scientifica Nazionale fa riferimento a Scopus, una banca dati per
     python3 -m venv venv
     source venv/bin/activate
     pip install scholar2scopus
-    python -m scholar2scopus.cli --name="Your Name"
+    python -m scholar2scopus.cli --author="Your Name"
 ```
 
 
