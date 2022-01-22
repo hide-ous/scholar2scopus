@@ -24,22 +24,23 @@ if __name__ == '__main__':
     scopus_titles = scopus_df.Title.tolist()
 
 
-
     def extract_field(bib, field):
         if field in bib:
             return bib[field]
         else:
             return None
 
+
     def print_bib(bib):
         return json.dumps(dict(filter(lambda x: x[0] != 'abstract', bib.items())), indent=4)
 
-    scholar_df = pd.read_json('../publications.json', orient='index')
+
+    scholar_df = pd.read_json('publications.json', orient='index')
     scholar_df['year'] = scholar_df.bib.apply(partial(extract_field, field='pub_year'))
     scholar_df['title'] = scholar_df.bib.apply(partial(extract_field, field='title'))
     scholar_df['journal'] = scholar_df.bib.apply(partial(extract_field, field='journal'))
 
-    with open('../assets/citations.pkl', 'rb') as f:
+    with open('assets/citations.pkl', 'rb') as f:
         scholar_citations = pickle.load(f)
 
     missing_citations = defaultdict(list)
@@ -49,8 +50,10 @@ if __name__ == '__main__':
             scholar_title = scholar_citation['bib']['title']
             best_scopus_title, best_scopus_title_score = process.extractOne(scholar_title, scopus_titles)
             if best_scopus_title_score > 90:
+                print('match', best_scopus_title_score, scholar_title, '\n', best_scopus_title)
                 continue
             else:
+                print('no match', best_scopus_title_score, scholar_title, '\n', best_scopus_title)
                 missing_citations[pubidx].append(scholar_citation)
 
             # citation_authors = scholar_citation['bib']['author']
@@ -77,9 +80,14 @@ if __name__ == '__main__':
             #         break
             # if not hasmatch:
             #     print('no match for ', scholar_citation['bib']['title'])
-    the_string = ''
+    strings = list()
     for pubidx, scholar_citations in missing_citations.items():
-        print()
-        print("The publication {} is missing the following citations:".format(print_bib(scholar_df.loc[pubidx].bib)))
+        print(pubidx)
+
+        strings.append("The publication:")
+        strings.append(print_bib(scholar_df.loc[pubidx].bib))
+        strings.append('is missing the following citations:')
         for scholar_citation in scholar_citations:
-            print(print_bib(scholar_citation['bib']))
+            strings.append(print_bib(scholar_citation['bib']))
+        strings.append('\n********************************************\n')
+    print('\n'.join(strings))

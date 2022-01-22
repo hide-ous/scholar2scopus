@@ -54,24 +54,24 @@ def refresh_proxy():
 def scrape_author_publications_citations(name, force_download=False):
     refresh_proxy()
 
-    if os.path.exists('../author.pkl') and not force_download:
-        with open('../author.pkl', 'rb') as f:
+    if os.path.exists('author.pkl') and not force_download:
+        with open('author.pkl', 'rb') as f:
             author = pickle.load(f)
     else:
         author = get_author(name)
-        with open('../author.json', 'w+', encoding='utf8') as f:
+        with open('author.json', 'w+', encoding='utf8') as f:
             json.dump({k: v for k, v in author.items() if k != 'source'}, f)
-        with open('../author.pkl', 'wb+') as f:
+        with open('author.pkl', 'wb+') as f:
             pickle.dump(author, f)
 
-    if os.path.exists('../publications.pkl') and not force_download:
-        with open('../publications.pkl', 'rb') as f:
+    if os.path.exists('publications.pkl') and not force_download:
+        with open('publications.pkl', 'rb') as f:
             publications = pickle.load(f)
     else:
         publications = dict(enumerate(get_publications(author)))
-        with open('../publications.json', 'w+', encoding='utf8') as f:
+        with open('publications.json', 'w+', encoding='utf8') as f:
             json.dump({k: v for k, v in publications.items() if k != 'source'}, f)
-        with open('../publications.pkl', 'wb+') as f:
+        with open('publications.pkl', 'wb+') as f:
             pickle.dump(publications, f)
 
     if os.path.exists('scholar_citations.pkl') and not force_download:
@@ -96,7 +96,7 @@ def scrape_author_publications_citations(name, force_download=False):
                     sleep(sleep_time)
                     refresh_proxy()
 
-        with open('../citations.json', 'w+', encoding='utf8') as f:
+        with open('citations.json', 'w+', encoding='utf8') as f:
             json.dump({k: v for k, v in citations.items() if k != 'source'}, f)
         with open('scholar_citations.pkl', 'wb+') as f:
             pickle.dump(citations, f)
