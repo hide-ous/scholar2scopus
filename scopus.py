@@ -1,4 +1,3 @@
-import json
 from functools import partial
 
 import pandas as pd
@@ -19,6 +18,7 @@ if __name__ == '__main__':
 
     scopus_df['last_names'] = scopus_df.Authors.apply(scopus_last_names)
 
+    #TODO: change, citations are in the format <id: list<citation>>
     scholar_df = pd.read_json('publications.json', orient='index')
 
 
