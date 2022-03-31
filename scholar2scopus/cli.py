@@ -15,7 +15,7 @@ def main():
     parser.add_argument('--report_path', action="store", help='path to the file where to write the report',
                         required=False, default='report.txt')
     parser.add_argument('--overwrite', action="store", help='overwrite files that were already downloaded',
-                        required=False, default=False, choices=('True', 'False'))
+                        required=False, default='False', choices=('True', 'False'))
 
     args = parser.parse_args()
     author = args.author
