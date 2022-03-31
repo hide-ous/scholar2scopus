@@ -55,6 +55,7 @@ def refresh_proxy(scraper_api_key = None):
 
 
 def scrape_author_publications_citations(name, force_download=False, scraper_api_key = None):
+    print('scraping', name)
     refresh_proxy(scraper_api_key)
 
     if os.path.exists('author.pkl') and not force_download:

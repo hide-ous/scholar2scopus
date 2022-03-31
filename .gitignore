@@ -130,5 +130,10 @@ dmypy.json
 /scopus.csv
 /publications.json
 /author.json
+/scholar_citations.json
+/scholar_citations.pkl
+/author.pkl
 
 .idea
+*.pkl
+*.exe
