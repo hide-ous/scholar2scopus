@@ -4,6 +4,7 @@ from collections import defaultdict
 from functools import partial
 
 import pandas as pd
+from scholarly import scholarly
 from thefuzz import process
 
 SCOPUS_CITATIONS = 'scopus.csv'
@@ -40,7 +41,7 @@ if __name__ == '__main__':
     scholar_df['title'] = scholar_df.bib.apply(partial(extract_field, field='title'))
     scholar_df['journal'] = scholar_df.bib.apply(partial(extract_field, field='journal'))
 
-    with open('assets/citations.pkl', 'rb') as f:
+    with open('scholar_citations.pkl', 'rb') as f:
         scholar_citations = pickle.load(f)
 
     missing_citations = defaultdict(list)
@@ -80,14 +81,26 @@ if __name__ == '__main__':
             #         break
             # if not hasmatch:
             #     print('no match for ', scholar_citation['bib']['title'])
+
+    def filter_citation(citation):
+        bib = defaultdict(lambda:"", citation['bib'])
+        if bib["pub_type"] in ["phdthesis"]:
+            return False
+        if ('arXiv' in bib['venue']) or ('arXiv' in bib['journal']):
+            return False
+        return True
+
     strings = list()
     for pubidx, scholar_citations in missing_citations.items():
         print(pubidx)
-
         strings.append("The publication:")
         strings.append(print_bib(scholar_df.loc[pubidx].bib))
         strings.append('is missing the following citations:')
-        for scholar_citation in scholar_citations:
-            strings.append(print_bib(scholar_citation['bib']))
+        for scholar_citation in filter(filter_citation, scholar_citations):
+            try:
+                the_string = scholarly.bibtex(scholar_citation['bib'])
+            except KeyError:
+                the_string = print_bib(scholar_citation['bib'])
+            strings.append(the_string)
         strings.append('\n********************************************\n')
     print('\n'.join(strings))

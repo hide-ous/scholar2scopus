@@ -36,23 +36,26 @@ def get_citations(publication):
                                              publication['num_citations']
                                              )):
         citations.append(citation)
-        # sleep_time = randint(1, 60)
-        # sleep(sleep_time)
+        sleep_time = randint(1, 60)
+        # print("sleeping {} seconds".format(sleep_time))
+        sleep(sleep_time)
 
     return citations
 
 
-def refresh_proxy():
+def refresh_proxy(scraper_api_key = None):
     pg = ProxyGenerator()
 
     # proxy = FreeProxy(rand=True, timeout=1, country_id=['IT']).get()
     # pg.SingleProxy(http=proxy, https=proxy)
-    pg.FreeProxies()
+    # pg.FreeProxies()
+    success = pg.ScraperAPI(scraper_api_key)
+    print(success and "connected to proxy" or "could not connect to proxy")
     scholarly.use_proxy(pg)
 
 
-def scrape_author_publications_citations(name, force_download=False):
-    refresh_proxy()
+def scrape_author_publications_citations(name, force_download=False, scraper_api_key = None):
+    refresh_proxy(scraper_api_key)
 
     if os.path.exists('author.pkl') and not force_download:
         with open('author.pkl', 'rb') as f:
@@ -75,8 +78,7 @@ def scrape_author_publications_citations(name, force_download=False):
             pickle.dump(publications, f)
 
     if os.path.exists('scholar_citations.pkl') and not force_download:
-        with open('scholar_citations.pkl', 'rb') as f:
-            citations = pickle.load(f)
+        pass
     else:
         citations = dict()
         for idx, publication in publications.items():
@@ -94,9 +96,9 @@ def scrape_author_publications_citations(name, force_download=False):
                     sleep_time = randint(1, 180)
                     print('sleeping for {} seconds before retrying'.format(sleep_time))
                     sleep(sleep_time)
-                    refresh_proxy()
+                    refresh_proxy(scraper_api_key)
 
-        with open('citations.json', 'w+', encoding='utf8') as f:
+        with open('scholar_citations.json', 'w+', encoding='utf8') as f:
             json.dump({k: v for k, v in citations.items() if k != 'source'}, f)
         with open('scholar_citations.pkl', 'wb+') as f:
             pickle.dump(citations, f)
